@@ -24,6 +24,10 @@ void ofDeepFace::setup(){
 void ofDeepFace::update(){
     for (auto &particle : particles) {
         particle.update();
+
+        if (ofGetMousePressed()) {
+            particle.applyForce(attractToMouse);
+        }
     }
 }
 

@@ -23,6 +23,12 @@ void Particle::update() {
     colorFader = min(1.0, colorFader + 0.001);
 }
 
+void Particle::applyForce(ofVec2f (*getForce)(ofVec2f pos)) {
+    // apply force to particles
+    ofVec2f force = getForce(pos);
+    pos += force;
+}
+
 void Particle::draw() {
     ofSetColor(color);
     ofDrawEllipse(pos, 3, 3);
