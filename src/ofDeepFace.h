@@ -21,8 +21,16 @@ class ofDeepFace : public ofBaseApp {
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
-		
+
+		void audioIn(ofSoundBuffer & input);
+
 		int particleCountInner = 1000;
 		int particleCountOuter = 3000;
 		vector<Particle> particles;
+
+		bool audioEnabled = false;
+		ofSoundStream soundStream;
+		double smoothedVol;
+		double scaledVol;
+		double maxVol = 0.1;
 };

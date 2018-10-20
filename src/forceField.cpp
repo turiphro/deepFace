@@ -47,3 +47,16 @@ ofVec2f attractToMouse(ofVec2f pos) {
 
     return strengthMouse * force + strengthExcitement * wiggle;
 }
+
+function<ofVec2f(ofVec2f)> createReactToSound(double volume) {
+    return [volume] (ofVec2f pos) -> ofVec2f {
+        // apply animation to sound
+        double strengthExcitement = ofGetWidth()/15.0;  // magic constant
+
+        ofVec2f center(ofGetWidth()/2, ofGetHeight()/2);
+        ofVec2f difference = (center - pos);
+        ofVec2f force = difference / ofGetWidth();
+
+        return -1 * strengthExcitement * volume * force;
+    };
+}

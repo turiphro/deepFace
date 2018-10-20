@@ -8,7 +8,7 @@ class Particle {
         Particle(ofVec2f (*f)(ofVec2f pos));
         void draw();
         void update();
-        void applyForce(ofVec2f (*f)(ofVec2f pos));
+        void applyForce(function<ofVec2f(ofVec2f)>);
         void increaseEntropy();
         void decreaseEntropy();
         void setColor(ofColor color);

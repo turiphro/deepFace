@@ -23,10 +23,10 @@ void Particle::update() {
     colorFader = min(1.0, colorFader + 0.001);
 }
 
-void Particle::applyForce(ofVec2f (*getForce)(ofVec2f pos)) {
+void Particle::applyForce(function<ofVec2f(ofVec2f)> getForce) {
     // apply force to particles
     ofVec2f force = getForce(pos);
-    pos += force;
+    speed += force;
 }
 
 void Particle::draw() {
