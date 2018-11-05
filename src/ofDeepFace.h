@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofMain.h"
+#include "ofTouch.h"
 #include "particle.h"
 
 class ofDeepFace : public ofBaseApp {
@@ -21,12 +22,15 @@ class ofDeepFace : public ofBaseApp {
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
+        void exit();
 
 		void audioIn(ofSoundBuffer & input);
 
-		int particleCountInner = 1000;
-		int particleCountOuter = 3000;
+		int particleCountInner = 500;
+		int particleCountOuter = 1000;
 		vector<Particle> particles;
+
+        ofTouch touch;
 
 		bool audioEnabled = false;
 		ofSoundStream soundStream;

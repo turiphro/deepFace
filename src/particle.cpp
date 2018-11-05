@@ -31,7 +31,7 @@ void Particle::applyForce(function<ofVec2f(ofVec2f)> getForce) {
 
 void Particle::draw() {
     ofSetColor(color);
-    ofDrawEllipse(pos, 3, 3);
+    ofDrawEllipse(pos, particleSize, particleSize);
 }
 
 void Particle::increaseEntropy() {

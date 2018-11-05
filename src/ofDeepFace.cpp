@@ -7,6 +7,9 @@ void ofDeepFace::setup(){
 
     ofSetBackgroundColor(0, 0, 0);
 
+    touch.setup("/dev/input/event2");
+    touch.calibrate(true, 150, 4000, 175, -3450);
+
     // add particles for inner eye circle
     for (int p=0; p<particleCountInner; p++) {
         Particle particle(getForceCenter);
@@ -22,42 +25,48 @@ void ofDeepFace::setup(){
     // setup sound
     soundStream.printDeviceList();
     ofSoundStreamSettings settings;
-    auto devices = soundStream.getMatchingDevices("default");
+    auto devices = soundStream.getMatchingDevices("", 1);
     if (!devices.empty()) {
+        cout << "Selecting audio: " << devices[0] << endl;
         settings.setInDevice(devices[0]);
         audioEnabled = true;
+
+        settings.setInListener(this);
+        settings.sampleRate = 44100;
+        settings.bufferSize = 256;
+        settings.numOutputChannels = 0;
+        settings.numInputChannels = 1;
+        soundStream.setup(settings);
     }
-    settings.setInListener(this);
-    settings.sampleRate = 44100;
-    settings.bufferSize = 256;
-    settings.numOutputChannels = 0;
-    settings.numInputChannels = 2;
-    soundStream.setup(settings);
 }
 
 //--------------------------------------------------------------
 void ofDeepFace::update(){
-    // apply regular particle movement
-    for (auto &particle : particles) {
-        particle.update();
-    }
-
-    // process mouse
-    if (ofGetMousePressed()) {
+    // process mouse or touch
+    bool touching = touch.isTouched();
+    if (touching) {
+        auto reactToTouch = createReactToTouch(touch.getCoordinates());
         for (auto &particle : particles) {
-            particle.applyForce(attractToMouse);
+            particle.applyForce(reactToTouch);
         }
     }
 
     // process sound
-    if (audioEnabled) {
+    // (disabled when touching, which makes sound)
+    if (audioEnabled && !touching) {
         scaledVol = ofMap(smoothedVol, 0.0, maxVol, 0.0, 1.0, true);
-        auto reactToSound = createReactToSound(scaledVol);
+        maxVol *= 0.9999999; // slow decay
         if (scaledVol > 0.1) {
+            auto reactToSound = createReactToSound(scaledVol);
             for (auto &particle : particles) {
                 particle.applyForce(reactToSound);
             }
         }
+    }
+
+    // apply regular particle movement
+    for (auto &particle : particles) {
+        particle.update();
     }
 }
 
@@ -156,18 +165,25 @@ void ofDeepFace::dragEvent(ofDragInfo dragInfo){
 }
 
 void ofDeepFace::audioIn(ofSoundBuffer & input) {
+    if (!audioEnabled) {
+        return;
+    }
+
     double curVol = 0.0;
 
     int count = 0;
     for  (size_t i = 0; i < input.getNumFrames(); i++) {
-        double left = input[i*2]*0.5;
-        double right = input[i*2+1]*0.5;
-        curVol += left * left + right * right;
-        count += 2;
+        double left = input[i];
+        curVol += left * left;
+        count += 1;
     }
 
     curVol /= (double)count;
     curVol = sqrt(curVol);
-    smoothedVol = 0.93 * smoothedVol + 0.07 * curVol;
-    maxVol = 0.5 * maxVol + 0.5 * max(maxVol, smoothedVol);
+    smoothedVol = 0.8 * smoothedVol + 0.2 * curVol;
+    maxVol = max(maxVol, smoothedVol);
+}
+
+void ofDeepFace::exit() {
+    touch.exit();
 }

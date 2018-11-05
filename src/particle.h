@@ -18,6 +18,7 @@ class Particle {
         ofVec2f speed;
         ofColor color;
         ofColor targetColor;
+        int particleSize = 4;
         double entropy = 1.0;
         double damping = 0.8;
         double colorFader = 0;
