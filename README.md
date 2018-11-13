@@ -23,9 +23,21 @@ This repository is tested on:
 
 
 ## Installation
-- Install OpenFrameworks into ~/software/openframeworks/
+- Install OpenFrameworks into ~/software/openframeworks/;
+  - To get rid of Poco compile errors, I had to recompile Poco with apothecary (an OFX specific build system):
+  ```
+  git clone https://github.com/openframeworks/apothecary.git && cd apothecary
+  ./apothecary/apothecary update poco
+  cp poco/ $OF_ROOT/addons/ofxPoco/libs/ -r
+  ```
+
 - Set $OF_ROOT to ~/software/openframeworks (add to .profile / .bashrc / .zshrc)
+
+- Install addons: `./install_dependencies.sh`, or manually to `$OF_ROOT/addons`:
+    - Install [ofxRPiTouch](https://github.com/turiphro/ofxRPiTouch)
+    - Install [ofxMQTT](https://github.com/256dpi/ofxMQTT.git)
+
+- `make && make RunRelease`
+
+### Additional installation for raspberry pi
 - Configure touchscreen: [[https://www.raspberrypi.org/forums/viewtopic.php?t=143581]]
-- Install [https://github.com/apparentVJ/ofxRPiTouch](ofxRPiTouch)
-
-

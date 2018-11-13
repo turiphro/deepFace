@@ -10,6 +10,8 @@ void ofDeepFace::setup(){
     touch.setup("/dev/input/event2");
     touch.calibrate(true, 150, 4000, 175, -3450);
 
+    api.setup("192.168.0.201", "", "", 1883);
+
     // add particles for inner eye circle
     for (int p=0; p<particleCountInner; p++) {
         Particle particle(getForceCenter);
@@ -64,6 +66,17 @@ void ofDeepFace::update(){
         }
     }
 
+    // process api messages
+    api.update();
+    while (!api.messages.empty()) {
+        auto &msg = api.messages.front();
+        api.messages.pop();
+        string topic = get<0>(msg);
+        string payload = get<1>(msg);
+
+        processMessage(topic, payload);
+    }
+
     // apply regular particle movement
     for (auto &particle : particles) {
         particle.update();
@@ -82,15 +95,10 @@ void ofDeepFace::keyPressed(int key){
     switch (key) {
         case '-':
             cout << "Decreased entropy" << endl;
-            for (auto &particle : particles) {
-                particle.decreaseEntropy();
-            }
+            decreaseEntropy();
             break;
         case '+':
-            cout << "Increased entropy" << endl;
-            for (auto &particle : particles) {
-                particle.increaseEntropy();
-            }
+            increaseEntropy();
             break;
         case 'a':
             // turn audio processing on or off
@@ -103,13 +111,10 @@ void ofDeepFace::keyPressed(int key){
             }
             break;
         case 'm':
-            // change 'mood' to random color
-            ofColor color;
-            color.setHsb(ofRandom(255), 255, 255);
-            cout << "Changed colour to " << color << endl;
-            for (auto &particle : particles) {
-                particle.setColor(color);
-            }
+            // change 'mood' to random colour
+            ofColor colour;
+            colour.setHsb(ofRandom(255), 255, 255);
+            setColour(colour);
             break;
     }
 }
@@ -184,6 +189,61 @@ void ofDeepFace::audioIn(ofSoundBuffer & input) {
     maxVol = max(maxVol, smoothedVol);
 }
 
+void ofDeepFace::processMessage(string topic, string payload) {
+    if (topic.compare("decreaseEntropy") == 0) {
+
+        decreaseEntropy();
+
+    } else if (topic.compare("increaseEntropy") == 0) {
+
+        increaseEntropy();
+
+    } else if (topic.compare("colour") == 0) {
+
+        // parse "r g b" from string
+        stringstream ss(payload);
+        int number;
+        vector<int> numbers;
+        while (ss >> number) {
+            numbers.push_back(number);
+        }
+
+        if (numbers.size() == 3) {
+            ofColor colour(numbers[0], numbers[1], numbers[2]);
+            setColour(colour);
+        } else {
+            cout << "! setColour: cannot parse string as 3 numbers: " << payload << endl;
+        }
+
+    } else {
+
+        cout << "! unknown message topic: " << topic << endl;
+
+    }
+}
+
+void ofDeepFace::decreaseEntropy() {
+    for (auto &particle : particles) {
+        particle.decreaseEntropy();
+    }
+    cout << "Decreased entropy" << endl;
+}
+
+void ofDeepFace::increaseEntropy() {
+    for (auto &particle : particles) {
+        particle.increaseEntropy();
+    }
+    cout << "Increased entropy" << endl;
+}
+
+void ofDeepFace::setColour(ofColor colour) {
+    for (auto &particle : particles) {
+        particle.setColor(colour);
+    }
+    cout << "Changed colour to " << colour << endl;
+}
+
 void ofDeepFace::exit() {
     touch.exit();
+    api.exit();
 }

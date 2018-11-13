@@ -2,6 +2,7 @@
 
 #include "ofMain.h"
 #include "ofTouch.h"
+#include "ofMqtt.h"
 #include "particle.h"
 
 class ofDeepFace : public ofBaseApp {
@@ -26,11 +27,17 @@ class ofDeepFace : public ofBaseApp {
 
 		void audioIn(ofSoundBuffer & input);
 
+        void processMessage(string topic, string payload);
+        void decreaseEntropy();
+        void increaseEntropy();
+        void setColour(ofColor colour);
+
 		int particleCountInner = 500;
 		int particleCountOuter = 1000;
 		vector<Particle> particles;
 
         ofTouch touch;
+        ofMqtt api;
 
 		bool audioEnabled = false;
 		ofSoundStream soundStream;
