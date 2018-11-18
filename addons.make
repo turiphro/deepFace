@@ -1,3 +1,4 @@
 ofxGui
-ofxRPiTouch
 ofxMQTT
+ofxOpenCv
+ofxRPiTouch

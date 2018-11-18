@@ -31,6 +31,9 @@ void ofMqtt::update() {
     }
 }
 
+void ofMqtt::draw() {
+}
+
 void ofMqtt::exit() {
     client.disconnect();
 }

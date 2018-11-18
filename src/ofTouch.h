@@ -14,6 +14,7 @@ class ofTouch {
         void setup(string device = "/dev/input/event0");
         void calibrate(bool swapXY, int minX, int maxX, int minY, int maxY);
         void update();
+        void draw();
         void exit();
 
         bool isTouched();

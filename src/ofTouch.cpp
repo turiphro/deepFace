@@ -22,6 +22,9 @@ void ofTouch::calibrate(bool swapXY, int minX, int maxX, int minY, int maxY) {
 void ofTouch::update() {
 }
 
+void ofTouch::draw() {
+}
+
 bool ofTouch::isTouched() {
     // Is the touchscreen or mouse currently being touched?
 

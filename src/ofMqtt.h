@@ -8,6 +8,7 @@ class ofMqtt {
         ofxMQTT client;
         void setup(string host, string username, string password, int port = 1883);
         void update();
+        void draw();
         void exit();
 
         void onOnline();

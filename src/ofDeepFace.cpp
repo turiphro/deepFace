@@ -12,15 +12,20 @@ void ofDeepFace::setup(){
 
     api.setup("192.168.0.201", "", "", 1883);
 
+    faceFinder.setup(0);
+
     // add particles for inner eye circle
+    ofVec2f center(ofGetWidth()/2, ofGetHeight()/2);
+    auto centerForce = createCenterForce(center);
     for (int p=0; p<particleCountInner; p++) {
-        Particle particle(getForceCenter);
+        Particle particle(centerForce, particleGroups::INNER);
         particles.push_back(particle);
     }
 
     // add particles for outer eye circle
+    auto circleForce = createCircleForce(center);
     for (int p=0; p<particleCountOuter; p++) {
-        Particle particle(getForceCircle);
+        Particle particle(circleForce, particleGroups::OUTER);
         particles.push_back(particle);
     }
 
@@ -77,6 +82,29 @@ void ofDeepFace::update(){
         processMessage(topic, payload);
     }
 
+    // process faces
+    // look at faces, in turn, by moving the pupil towards it
+    if (faceEnabled) {
+        faceFinder.update();
+
+        if (faceFinder.faceCenters.size() > 0) {
+            ofVec2f currFace = faceFinder.getCurrentFace();
+            ofVec2f centerInner = faceFinder.getCenterCoordinate(currFace, faceForceInner);
+            ofVec2f centerOuter = faceFinder.getCenterCoordinate(currFace, faceForceOuter);
+
+            // update force functions with new center
+            auto centerForce = createCenterForce(centerInner);
+            auto circleForce = createCircleForce(centerOuter);
+            for (auto &particle : particles) {
+                if (particle.group == particleGroups::INNER) {
+                    particle.getForce = centerForce;
+                } else {
+                    particle.getForce = circleForce;
+                }
+            }
+        }
+    }
+
     // apply regular particle movement
     for (auto &particle : particles) {
         particle.update();
@@ -87,6 +115,13 @@ void ofDeepFace::update(){
 void ofDeepFace::draw(){
     for (Particle particle : particles) {
         particle.draw();
+    }
+
+    touch.draw();
+    api.draw();
+
+    if (faceEnabled) {
+        faceFinder.draw();
     }
 }
 
@@ -109,6 +144,11 @@ void ofDeepFace::keyPressed(int key){
             } else {
                 soundStream.stop();
             }
+            break;
+        case 'f':
+            // turn face processing on or off
+            faceEnabled = !faceEnabled;
+            cout << "Face processing set to " << faceEnabled << endl;
             break;
         case 'm':
             // change 'mood' to random colour
@@ -246,4 +286,5 @@ void ofDeepFace::setColour(ofColor colour) {
 void ofDeepFace::exit() {
     touch.exit();
     api.exit();
+    faceFinder.exit();
 }

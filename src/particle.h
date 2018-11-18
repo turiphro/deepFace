@@ -5,7 +5,7 @@
 class Particle {
     public:
 
-        Particle(ofVec2f (*f)(ofVec2f pos));
+        Particle(function<ofVec2f(ofVec2f)>, int group = 0);
         void draw();
         void update();
         void applyForce(function<ofVec2f(ofVec2f)>);
@@ -13,7 +13,8 @@ class Particle {
         void decreaseEntropy();
         void setColor(ofColor color);
 
-        ofVec2f (*getForce)(ofVec2f);
+        int group;
+        function<ofVec2f(ofVec2f)> getForce;
         ofVec2f pos;
         ofVec2f speed;
         ofColor color;

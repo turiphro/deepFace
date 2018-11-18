@@ -3,6 +3,7 @@
 #include "ofMain.h"
 #include "ofTouch.h"
 #include "ofMqtt.h"
+#include "ofFaceFinder.h"
 #include "particle.h"
 
 class ofDeepFace : public ofBaseApp {
@@ -32,12 +33,21 @@ class ofDeepFace : public ofBaseApp {
         void increaseEntropy();
         void setColour(ofColor colour);
 
+		vector<Particle> particles;
 		int particleCountInner = 500;
 		int particleCountOuter = 1000;
-		vector<Particle> particles;
+        enum particleGroups {
+            INNER = 0,
+            OUTER = 1
+        };
 
         ofTouch touch;
         ofMqtt api;
+
+        bool faceEnabled = true;
+        ofFaceFinder faceFinder;
+        float faceForceInner = 0.5;
+        float faceForceOuter = 0.3;
 
 		bool audioEnabled = false;
 		ofSoundStream soundStream;

@@ -1,12 +1,13 @@
 #include "particle.h"
 
-Particle::Particle(ofVec2f (*getForce)(ofVec2f pos)) {
+Particle::Particle(function<ofVec2f(ofVec2f)> getForce, int group) {
     int x = (int)ofRandom(ofGetWidth());
     int y = (int)ofRandom(ofGetHeight());
     pos.set(x, y);
     color.set(0, 0, 0);
     targetColor.set(255, 0, 0);
     this->getForce = getForce;
+    this->group = group;
 }
 
 void Particle::update() {
@@ -30,6 +31,7 @@ void Particle::applyForce(function<ofVec2f(ofVec2f)> getForce) {
 }
 
 void Particle::draw() {
+    ofFill();
     ofSetColor(color);
     ofDrawEllipse(pos, particleSize, particleSize);
 }
