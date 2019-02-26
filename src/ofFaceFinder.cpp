@@ -92,7 +92,7 @@ ofVec2f ofFaceFinder::getCenterCoordinate(ofVec2f faceCoord, float strength) {
     /*
      * Calculate pixel coordinates from the center of a detected face,
      * mapping from webcam coordinates to screen coordinates with a strength
-     * strength: force of the face pulling the coordinate
+     * @param strength: force of the face pulling the coordinate (1 = real location)
      */
     ofVec2f faceCoordCentered(faceCoord.x - 0.5, faceCoord.y - 0.5);
 

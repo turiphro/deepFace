@@ -1,17 +1,18 @@
 # Deep Face
-This is an interface for your AI. Inspired by A Space Odyssey's HAL 9000
+Deep Face is giving a face to AI systems. Inspired by A Space Odyssey's HAL 9000
 and the Eye of Sauron (LOTR), the eye of the AI is made out of tiny
-particles swarming around the pupil and contours. They will react to sound,
-touch, and other events, and will resemble emotions from the AI and
-surrounding system Deep Face is integrated in.
+particles swarming around, together forming the pupil and eye contours.
+The particles will react to sound, touch, and other events, and will resemble
+emotions as experienced by the AI and surrounding system Deep Face is integrated in.
+Of course, none of these emotions are real. But what do these simple humans know?
 
 Features include:
 
 - Eye simulation based on thousands of particles
 - Runs on a Raspberry Pi (3 B+) or other ARM boards or computers
-- Reacts to touch (& mouse)
+- Reacts to touch and mouse
 - Reacts to sound
-- (TODO) API to control entropy (excitement) and colour (currently keyboard shortcuts)
+- MQTT API (and keyboard shortcuts) to control entropy (excitement) and colour (emotion)
 
 
 ## Hardware
@@ -31,13 +32,23 @@ This repository is tested on:
   cp poco/ $OF_ROOT/addons/ofxPoco/libs/ -r
   ```
 
-- Set $OF_ROOT to ~/software/openframeworks (add to .profile / .bashrc / .zshrc)
+- Set $OF_ROOT to ~/software/openframeworks in .profile / .bashrc / .zshrc
 
-- Install addons: `./install_dependencies.sh`, or manually to `$OF_ROOT/addons`:
+- Install addons: run `./install_dependencies.sh`, or install manually to `$OF_ROOT/addons`:
     - Install [ofxRPiTouch](https://github.com/turiphro/ofxRPiTouch)
     - Install [ofxMQTT](https://github.com/256dpi/ofxMQTT.git)
 
 - `make && make RunRelease`
 
+
 ### Additional installation for raspberry pi
 - Configure touchscreen: [[https://www.raspberrypi.org/forums/viewtopic.php?t=143581]]
+- Most USB microphones will work out of the box
+- Add a USB webcam for evil eye tracking WHAHAHA (rpi onboard camera not supported yet)
+
+
+
+## More info
+<https://turiphro.nl/projects/deep-face>
+
+![Photo of prototype](deepFace-wall.jpg)
